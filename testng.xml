@@ -2,7 +2,7 @@
 <suite parallel="false" name="Suite">
   <test name="Test">
     <classes>
-      <class name="com.oreilly.SearchTest01"/>
+      <class name="com.oreilly.SearchTest"/>
     </classes>
   </test> 
 </suite>
