@@ -1,9 +1,12 @@
 package com.oreilly;
 
 import org.testng.annotations.Test;
+
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.AfterClass;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -75,5 +78,76 @@ public class SearchTest extends Base {
 				driver.switchTo().window(parentWindow);
 			}
 		}
+	}
+	
+
+	/**
+	 * Find the index of the 3rd (target) search result which doesn't include video
+	 * 
+	 * @param driver
+	 * @param target
+	 * @return the index of the single search result
+	 */
+	private int findTheLinkIndexAndSkipVideo(WebDriver driver, int target) throws Exception {
+
+		// Xpath for all listed regular search results. doesn't include ads
+		String xpathOfFullList = "//*[@id=\"web\"]/ol/li";
+		String skipWord = "Video Results";
+		int count = 0;
+		int index = 0;
+
+		List<WebElement> allSearchResults = driver.findElements(By.xpath(xpathOfFullList));
+		if (allSearchResults == null || allSearchResults.size() < target)
+			throw new NotEnoughResultException();
+		else {
+			for (WebElement Element : allSearchResults) {
+				index++;
+				System.out.print(count + "=====" + Element.getText() + "\n");
+				if (!Element.getText().contains(skipWord)) {
+					if (++count >= target) {
+						break;
+					}
+				}
+				// else continue
+				else {
+					System.out.print("SKIP It \n");
+				}
+			}
+		}
+		return index;
+	}
+
+	private class NotEnoughResultException extends Exception {
+		public NotEnoughResultException() {
+			super();
+		}
+	}	
+	
+	private static List<String> givenFirstTermList = Arrays.asList("red", "green", "blue");
+	private static List<String> givenLastTermList = Arrays.asList("grass", "the rainbow", "a turtle", "a unicorn");
+	
+	/**
+	 * Generate a search query from terms
+	 * 
+	 * @return a search string
+	 */
+	private String generateSearchString() {
+		String searchString = "";
+		String searchString1 = getRandomElement(givenFirstTermList);
+		String searchString2 = " is the color of ";
+		String searchString3 = getRandomElement(givenLastTermList);
+
+		searchString = searchString1 + searchString2 + searchString3;
+
+		return searchString;
+	}
+
+	/**
+	 * For debugging only
+	 * 
+	 * @return a hard code string for debugging
+	 */
+	private String getHardCodedSearchString() {
+		return "red is the color of the rainbow";
 	}
 }
